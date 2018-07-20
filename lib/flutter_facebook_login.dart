@@ -35,11 +35,9 @@ import 'package:flutter/services.dart';
 /// and iOS clients. See the README for detailed instructions.
 /// ```
 class FacebookLogin {
-  static const MethodChannel channel =
-      const MethodChannel('com.roughike/flutter_facebook_login');
+  static const MethodChannel channel = const MethodChannel('com.roughike/flutter_facebook_login');
 
-  FacebookLoginBehavior _loginBehavior =
-      FacebookLoginBehavior.nativeWithFallback;
+  FacebookLoginBehavior _loginBehavior = FacebookLoginBehavior.nativeWithFallback;
 
   /// Controls how the login dialog should be presented.
   ///
@@ -77,8 +75,7 @@ class FacebookLogin {
   ///
   /// If the user is not logged in, this returns null.
   Future<FacebookAccessToken> get currentAccessToken async {
-    final Map<dynamic, dynamic> accessToken =
-        await channel.invokeMethod('getCurrentAccessToken');
+    final Map<dynamic, dynamic> accessToken = await channel.invokeMethod('getCurrentAccessToken');
 
     if (accessToken == null) {
       return null;
@@ -98,14 +95,12 @@ class FacebookLogin {
   Future<FacebookLoginResult> logInWithReadPermissions(
     List<String> permissions,
   ) async {
-    final Map<dynamic, dynamic> result =
-        await channel.invokeMethod('loginWithReadPermissions', {
+    final Map<dynamic, dynamic> result = await channel.invokeMethod('loginWithReadPermissions', {
       'behavior': _currentLoginBehaviorAsString(),
       'permissions': permissions,
     });
 
-    return _deliverResult(
-        new FacebookLoginResult._(result.cast<String, dynamic>()));
+    return _deliverResult(new FacebookLoginResult._(result.cast<String, dynamic>()));
   }
 
   /// Logs the user in with the requested publish permissions.
@@ -125,14 +120,12 @@ class FacebookLogin {
   Future<FacebookLoginResult> loginWithPublishPermissions(
     List<String> permissions,
   ) async {
-    final Map<dynamic, dynamic> result =
-        await channel.invokeMethod('loginWithPublishPermissions', {
+    final Map<dynamic, dynamic> result = await channel.invokeMethod('loginWithPublishPermissions', {
       'behavior': _currentLoginBehaviorAsString(),
       'permissions': permissions,
     });
 
-    return _deliverResult(
-        new FacebookLoginResult._(result.cast<String, dynamic>()));
+    return _deliverResult(new FacebookLoginResult._(result.cast<String, dynamic>()));
   }
 
   /// Logs the currently logged in user out.
@@ -151,6 +144,39 @@ class FacebookLogin {
   ///
   /// For more, see: https://github.com/roughike/flutter_facebook_login/issues/4
   Future<void> logOut() async => channel.invokeMethod('logOut');
+
+  /// Check if Facebook is available for sharing.
+  static Future<bool> canShareWithFacebook() => channel.invokeMethod('canShareWithFacebook');
+
+  /// Check if Messenger is available for sharing.
+  static Future<bool> canShareWithMessenger() => channel.invokeMethod('canShareWithMessenger');
+
+  /// Opens Facebook app if it's installed, or the browser if it's not, to share a URL.
+  ///
+  /// Note that this can only be used with a properly formatted URL.
+  ///
+  /// Will throw a [FBSDKException] if the URL is badly formatted.
+  static Future<void> shareUrlOnFacebook(String url) async {
+    try {
+      await channel.invokeMethod('shareUrlOnFacebook', {'url': url});
+    } on PlatformException catch (e) {
+      throw new FBSDKException(e.code, e.message);
+    }
+  }
+
+  /// Opens Messenger to share a URL.
+  ///
+  /// Note that this can only be used with a properly formatted URL and if Messenger app is installed.
+  /// You can check if Messenger is available for sharing with [canShareWithMessenger].
+  ///
+  /// Will throw a [FBSDKException] if the URL is badly formatted or if the app fails to open.
+  static Future<void> shareUrlOnMessenger(String url) async {
+    try {
+      await channel.invokeMethod('shareUrlOnMessenger', {'url': url});
+    } on PlatformException catch (e) {
+      throw new FBSDKException(e.code, e.message);
+    }
+  }
 
   String _currentLoginBehaviorAsString() {
     assert(_loginBehavior != null, 'The login behavior was unexpectedly null.');
@@ -354,9 +380,16 @@ class FacebookAccessToken {
 
   @override
   int get hashCode =>
-      token.hashCode ^
-      userId.hashCode ^
-      expires.hashCode ^
-      permissions.hashCode ^
-      declinedPermissions.hashCode;
+      token.hashCode ^ userId.hashCode ^ expires.hashCode ^ permissions.hashCode ^ declinedPermissions.hashCode;
+}
+
+/// This is thrown when the plugin reports an error.
+class FBSDKException implements Exception {
+  String code;
+  String description;
+
+  FBSDKException(this.code, this.description);
+
+  @override
+  String toString() => '$runtimeType($code, $description)';
 }

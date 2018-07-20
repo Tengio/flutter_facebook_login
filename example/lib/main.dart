@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 
 void main() => runApp(new MyApp());
 
@@ -14,10 +14,22 @@ class _MyAppState extends State<MyApp> {
   static final FacebookLogin facebookSignIn = new FacebookLogin();
 
   String _message = 'Log in/out by pressing the buttons below.';
+  bool canShareOnFacebook = false;
+  bool canShareOnMessenger = false;
+
+  @override
+  initState() {
+    FacebookLogin.canShareWithFacebook().then((bool canShare) {
+      if (mounted) setState(() => canShareOnFacebook = canShare);
+    });
+    FacebookLogin.canShareWithMessenger().then((bool canShare) {
+      if (mounted) setState(() => canShareOnMessenger = canShare);
+    });
+    super.initState();
+  }
 
   Future<Null> _login() async {
-    final FacebookLoginResult result =
-        await facebookSignIn.logInWithReadPermissions(['email']);
+    final FacebookLoginResult result = await facebookSignIn.logInWithReadPermissions(['email']);
 
     switch (result.status) {
       case FacebookLoginStatus.loggedIn:
@@ -65,13 +77,33 @@ class _MyAppState extends State<MyApp> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               new Text(_message),
+              const Padding(padding: const EdgeInsets.only(top: 12.0)),
               new RaisedButton(
                 onPressed: _login,
                 child: new Text('Log in'),
               ),
+              const Padding(padding: const EdgeInsets.only(top: 12.0)),
               new RaisedButton(
                 onPressed: _logOut,
                 child: new Text('Logout'),
+              ),
+              const Padding(padding: const EdgeInsets.only(top: 12.0)),
+              new RaisedButton(
+                onPressed: !canShareOnFacebook
+                    ? null
+                    : () async {
+                        await FacebookLogin.shareUrlOnFacebook("http://developers.facebook.com/");
+                      },
+                child: new Text('Share a link on Facebook'),
+              ),
+              const Padding(padding: const EdgeInsets.only(top: 12.0)),
+              new RaisedButton(
+                onPressed: !canShareOnMessenger
+                    ? null
+                    : () async {
+                        await FacebookLogin.shareUrlOnMessenger("http://developers.facebook.com/a");
+                      },
+                child: new Text('Share a link on Messenger'),
               ),
             ],
           ),

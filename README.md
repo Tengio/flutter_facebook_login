@@ -4,6 +4,37 @@
  [![Build Status](https://travis-ci.org/roughike/flutter_facebook_login.svg?branch=master)](https://travis-ci.org/roughike/flutter_facebook_login) 
  [![Coverage Status](https://coveralls.io/repos/github/roughike/flutter_facebook_login/badge.svg)](https://coveralls.io/github/roughike/flutter_facebook_login)
 
+-----------------------------------------------------------------------------
+
+
+## Facebook Share SDK
+
+*TODO*: Tengio: document the new integration of the Share SDK to share links:
+
+- `FacebookLogin.canShareWithFacebook()`
+- `FacebookLogin.canShareWithMessenger()`
+- `FacebookLogin.shareUrlOnFacebook(String url)`
+- `FacebookLogin.shareUrlOnMessenger(String url)`
+
+For Android, add this to the AndroidManifest.xml where {APP_ID} is your app ID:
+
+``` xml
+<provider android:authorities="com.facebook.app.FacebookContentProvider{APP_ID}"
+          android:name="com.facebook.FacebookContentProvider"
+          android:exported="true"/>
+```
+
+For IOS follow what's in this doc and make sure you have the following in your Info.plist file:
+
+``` xml
+<key>LSApplicationQueriesSchemes</key>
+<array>
+    <string>fb-messenger-share-api</string>
+    <string>fbshareextension</string>
+</array>
+```
+
+-----------------------------------------------------------------------------
 
 A Flutter plugin for using the native Facebook Login SDKs on Android and iOS.
 
