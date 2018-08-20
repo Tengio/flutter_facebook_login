@@ -24,7 +24,7 @@ For Android, add this to the AndroidManifest.xml where {APP_ID} is your app ID:
           android:exported="true"/>
 ```
 
-For IOS follow what's in this doc and make sure you have the following in your Info.plist file:
+For iOS follow what's in this doc and make sure you have the following in your Info.plist file:
 
 ``` xml
 <key>LSApplicationQueriesSchemes</key>
@@ -33,6 +33,9 @@ For IOS follow what's in this doc and make sure you have the following in your I
     <string>fbshareextension</string>
 </array>
 ```
+
+Gradle plugin is now 3.1.3.
+FBSDK version 4.34.0 (up from 4.32.0)
 
 -----------------------------------------------------------------------------
 

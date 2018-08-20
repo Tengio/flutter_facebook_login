@@ -146,10 +146,14 @@ class FacebookLogin {
   Future<void> logOut() async => channel.invokeMethod('logOut');
 
   /// Check if Facebook is available for sharing.
-  static Future<bool> canShareWithFacebook() => channel.invokeMethod('canShareWithFacebook');
+  static Future<bool> canShareWithFacebook() async {
+    return await channel.invokeMethod('canShareWithFacebook') as bool;
+  }
 
   /// Check if Messenger is available for sharing.
-  static Future<bool> canShareWithMessenger() => channel.invokeMethod('canShareWithMessenger');
+  static Future<bool> canShareWithMessenger() async {
+    return await channel.invokeMethod('canShareWithMessenger') as bool;
+  }
 
   /// Opens Facebook app if it's installed, or the browser if it's not, to share a URL.
   ///
