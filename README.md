@@ -6,6 +6,12 @@
 
 -----------------------------------------------------------------------------
 
+# To update Facebook SDK:
+
+- Update the version number in `ios/flutter_facebook_login.podspec`.
+- go to `example/ios` and run `pod deintegrate && pod install`
+- If that doesn't work run `pod repo update`, delete `example/ios/Podfile.lock` and try again.
+
 
 ## Facebook Share SDK
 
